@@ -7,7 +7,10 @@
 
 ### (하드웨어 기기) → (Mosquitto) → (Firebase) → (Android Studio)
 # Todo
-- Firebase android studio 연결
-- MQTT Mosquitto 연결
-- 하드웨어 기기 Mosquitto 서버 연결
-- AWS 서버 게시
+- Firebase android studio 연결 완료
+- MQTT Mosquitto, 안드로이드 스튜디오 연결 완료
+- 하드웨어 기기 Mosquitto 서버 연결 -> 한주님
+- AWS 서버 게시 -> 해야 함
+------------------------------------------------------------------------
+이게 끝나면 해야할 일 
+- 웹 만들기
