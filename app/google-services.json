@@ -1,0 +1,68 @@
+{
+  "project_info": {
+    "project_number": "547340250602",
+    "firebase_url": "https://bio-reacter-default-rtdb.firebaseio.com",
+    "project_id": "bio-reacter",
+    "storage_bucket": "bio-reacter.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:547340250602:android:b822fec085cf3df8019693",
+        "android_client_info": {
+          "package_name": "com.company.bio_reactor"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBncswl1layKxO_uD6V7l_1RQtAg2UhpCI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:547340250602:android:cab006335e10d4ce019693",
+        "android_client_info": {
+          "package_name": "com.example.bio_reactor"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBncswl1layKxO_uD6V7l_1RQtAg2UhpCI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:547340250602:android:0c65a4ef7888fb05019693",
+        "android_client_info": {
+          "package_name": "com.example.bioreactor"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBncswl1layKxO_uD6V7l_1RQtAg2UhpCI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

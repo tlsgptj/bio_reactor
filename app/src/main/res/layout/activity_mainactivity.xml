@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <VideoView
+        android:id="@+id/Video"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"/>
+
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="300dp"
+        android:layout_marginLeft="30dp"
+        android:text="Heter Temp 10개를 해야함"
+        android:textSize="30dp"
+        android:textColor="@color/black"
+        tools:layout_editor_absoluteX="27dp"
+        tools:layout_editor_absoluteY="297dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="500dp"
+        android:layout_marginLeft="130dp"
+        android:text="SSR UV SW"
+        android:textSize="30dp"
+        android:textColor="@color/black" />
+
+    <SeekBar
+        android:id="@+id/phProgress"
+        android:layout_width="150dp"
+        android:layout_height="50dp"
+        android:layout_marginLeft="200dp"
+        android:layout_marginTop="200dp"
+        android:background="#FFFFFF"
+        android:orientation="horizontal" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="210dp"
+        android:layout_marginLeft="40dp"
+        android:textSize="20dp"
+        android:text=""/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=""/>
+
+    <RadioButton
+        android:id="@+id/UV_sensor"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="500dp"
+        android:layout_marginLeft="90dp"/>
+</FrameLayout>
