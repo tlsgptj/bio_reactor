@@ -8,57 +8,117 @@
 
     <VideoView
         android:id="@+id/Video"
-        android:layout_width="match_parent"
+        android:layout_marginLeft="15dp"
+        android:layout_marginTop="20dp"
+        android:layout_width="380dp"
         android:layout_height="200dp"/>
 
-
-
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="300dp"
-        android:layout_marginLeft="30dp"
-        android:text="Heter Temp 10개를 해야함"
-        android:textSize="30dp"
-        android:textColor="@color/black"
-        tools:layout_editor_absoluteX="27dp"
-        tools:layout_editor_absoluteY="297dp" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="500dp"
-        android:layout_marginLeft="130dp"
-        android:text="SSR UV SW"
-        android:textSize="30dp"
+        android:layout_marginTop="230dp"
+        android:layout_marginLeft="25dp"
+        android:text="현재시간"
+        android:textSize="20dp"
         android:textColor="@color/black" />
 
-    <SeekBar
-        android:id="@+id/phProgress"
-        android:layout_width="150dp"
-        android:layout_height="50dp"
-        android:layout_marginLeft="200dp"
-        android:layout_marginTop="200dp"
-        android:background="#FFFFFF"
-        android:orientation="horizontal" />
-
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="210dp"
-        android:layout_marginLeft="40dp"
+        android:text="00:00:00"
+        android:textColor="@color/black"
         android:textSize="20dp"
-        android:text=""/>
+        android:layout_marginTop="230dp"
+        android:layout_marginLeft="110dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="모터는 0~2000까지 제어가 가능합니다."
+        android:textColor="@color/black"
+        android:textSize="10dp"
+        android:layout_marginTop="540dp"
+        android:layout_marginLeft="40dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="260dp"
+        android:layout_marginLeft="25dp"
+        android:text="현재 측정값"
+        android:textSize="20dp"
+        android:textColor="@color/black" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="350dp"
+        android:layout_height="50dp"
+        android:orientation="horizontal"
+        android:layout_marginLeft="25dp"
+        android:layout_marginTop="300dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="20dp"
+        android:textColor="@color/black"
+        android:layout_marginLeft="25dp"
+        android:layout_marginTop="365dp"
+        android:text="시각화"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="350dp"
+        android:layout_height="130dp"
+        android:orientation="horizontal"
+        android:layout_marginTop="400dp"
+        android:layout_marginLeft="25dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="20dp"
+        android:textColor="@color/black"
+        android:layout_marginLeft="40dp"
+        android:layout_marginTop="570dp"
+        android:text="motor1"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="20dp"
+        android:textColor="@color/black"
+        android:layout_marginLeft="40dp"
+        android:layout_marginTop="620dp"
+        android:text="motor2"/>
+
+    <EditText
+        android:id="@+id/motor_text"
+        android:layout_marginTop="560dp"
+        android:layout_marginLeft="120dp"
+        android:textSize="20dp"
+        android:layout_width="200dp"
+        android:layout_height="40dp"/>
+
+    <EditText
+        android:id="@+id/motor_text"
+        android:layout_marginTop="610dp"
+        android:layout_marginLeft="120dp"
+        android:textSize="20dp"
+        android:layout_width="200dp"
+        android:layout_height="40dp"/>
+
+    <Button
+        android:id="@+id/UV"
+        android:layout_width="200dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="660dp"
+        android:layout_marginLeft="100dp"
+        android:textColor="@color/white"
+        android:textSize="20dp"
+        android:text="UV"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text=""/>
 
-    <RadioButton
-        android:id="@+id/UV_sensor"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="500dp"
-        android:layout_marginLeft="90dp"/>
 </FrameLayout>
