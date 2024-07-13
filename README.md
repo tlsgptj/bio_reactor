@@ -10,3 +10,4 @@
 - Firebase android studio 연결
 - MQTT Mosquitto 연결
 - 하드웨어 기기 Mosquitto 서버 연결
+- AWS 서버 게시
