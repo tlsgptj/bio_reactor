@@ -18,11 +18,13 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="230dp"
         android:layout_marginLeft="25dp"
+        android:textStyle="bold"
         android:text="현재시간"
         android:textSize="20dp"
         android:textColor="@color/black" />
 
     <TextView
+        android:id="@+id/time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="00:00:00"
@@ -46,10 +48,12 @@
         android:layout_marginTop="260dp"
         android:layout_marginLeft="25dp"
         android:text="현재 측정값"
+        android:textStyle="bold"
         android:textSize="20dp"
         android:textColor="@color/black" />
 
     <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_result"
         android:layout_width="350dp"
         android:layout_height="50dp"
         android:orientation="horizontal"
@@ -60,12 +64,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="20dp"
+        android:textStyle="bold"
         android:textColor="@color/black"
         android:layout_marginLeft="25dp"
         android:layout_marginTop="365dp"
         android:text="시각화"/>
 
     <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_chart"
         android:layout_width="350dp"
         android:layout_height="130dp"
         android:orientation="horizontal"
@@ -91,7 +97,7 @@
         android:text="motor2"/>
 
     <EditText
-        android:id="@+id/motor_text"
+        android:id="@+id/motor_text1"
         android:layout_marginTop="560dp"
         android:layout_marginLeft="120dp"
         android:textSize="20dp"
@@ -99,7 +105,7 @@
         android:layout_height="40dp"/>
 
     <EditText
-        android:id="@+id/motor_text"
+        android:id="@+id/motor_text2"
         android:layout_marginTop="610dp"
         android:layout_marginLeft="120dp"
         android:textSize="20dp"

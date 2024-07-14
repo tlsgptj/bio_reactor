@@ -21,6 +21,8 @@ import org.json.JSONObject
 import java.io.IOException
 
 class MainActivity : AppCompatActivity() {
+    private lateinit var
+
 
     // Firebase 데이터베이스 인스턴스 및 데이터베이스 참조
     private lateinit var database: FirebaseDatabase
@@ -32,7 +34,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_mainactivity)
 
         //서버 경로 추가
-        mqttClientManager = MqttClientManager(this, "tcp://broker-url:1883", "android-client-id")
+        mqttClientManager = MqttClientManager(this, "tcp://broker-url:1883", "tlsgptj")
         //MQTT 테스트
         mqttClientManager.connect(object : IMqttActionListener {
             override fun onSuccess(asyncActionToken: IMqttToken?) {
