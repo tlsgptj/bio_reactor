@@ -1,11 +1,13 @@
 package com.example.bioreactor
 
-import MqttClientManager
+import android.content.ContentValues.TAG
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
+import android.widget.Toast
 import android.widget.VideoView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
@@ -29,7 +31,12 @@ class MainActivity : AppCompatActivity() {
     private lateinit var dataRef: DatabaseReference
     private lateinit var dataUV : DatabaseReference
     private lateinit var datatime : DatabaseReference
-    private var isUVON = false
+    private lateinit var dataPH : DatabaseReference
+    private lateinit var dataMotor1 : DatabaseReference
+    private lateinit var dataID : DatabaseReference
+    private lateinit var dataPW : DatabaseReference
+    private lateinit var dataMotor2 : DatabaseReference
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,16 +49,6 @@ class MainActivity : AppCompatActivity() {
         motor_text1 = motor_text1.findViewById<EditText>(R.id.motor_text1)
         motor_text2 = motor_text2.findViewById<EditText>(R.id.motor_text2)
 
-        UV_button.setOnClickListener {
-            //버튼은 on, off만 될 수 있도록 설정해야함
-            if (isUVON) {
-                turnOffUV()
-            } else {
-                turnONUV()
-            }
-            isUVON = !isUVON
-        }
-
 
         // Firebase 데이터베이스 인스턴스 초기화
         FirebaseApp.initializeApp(this)
@@ -59,9 +56,37 @@ class MainActivity : AppCompatActivity() {
         dataRef = database.getReference("temp") // "data" 경로를 가리키는 데이터베이스 참조
         dataUV = database.getReference("UV")
         datatime = database.getReference("time")
+        dataPH = database.getReference("PH")
+        dataID = database.getReference("ID")
+        dataPW = database.getReference("PW")
+        dataMotor1 = database.getReference("motor")
+        dataMotor2 = database.getReference("motor1")
+
+        UV_button.setOnClickListener {
+            //버튼은 on, off만 될 수 있도록 설정해야함
+            dataUV.addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    val isUVOn = dataSnapshot.getValue(Boolean::class.java) ?: false
+
+                    // UV 상태에 따라 동작을 수행
+                    if (isUVOn) {
+                        // UV가 켜져 있는 경우
+                        //색깔 바뀌는 함수 추가
+                        dataUV.setValue("false")
+                    } else {
+                        // UV가 꺼져 있는 경우
+                        dataUV.setValue("true")
+                    }
+
+                }
+                override fun onCancelled(databaseError: DatabaseError) {
+                    Log.d("failed", "실패요~~~~~")
+                }
+            })
+        }
 
 
-        // 데이터 읽기를 위한 ValueEventListener 설정
+        // 온도를 데이터에 받아와서 저장합니다.
         val valueEventListener = object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 // 데이터가 변경될 때 호출됨
@@ -74,6 +99,7 @@ class MainActivity : AppCompatActivity() {
                             it.temp6, it.temp7, it.temp8, it.temp9, it.temp10
                         )
                         Log.d(TAG, "Temperatures: $temperatures")
+
                     }
                 }
             }
@@ -87,14 +113,41 @@ class MainActivity : AppCompatActivity() {
         // ValueEventListener를 데이터베이스 참조에 추가하여 데이터를 실시간으로 가져옴
         dataRef.addValueEventListener(valueEventListener)
 
-
         // HTTP 요청 및 데이터 전송
         sendHttpRequest()
     }
-    private fun turnONUV() {
+    //모터 제어 함수
+    private fun saveTextToDatabase(reference: DatabaseReference, text: String, context: Context) {
+        val key = reference.push().key
+        if (key != null) {
+            reference.setValue(text)
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        Toast.makeText(context, "데이터가 성공적으로 저장되었습니다.", Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(context, "데이터 저장에 실패하였습니다.", Toast.LENGTH_SHORT).show()
+                    }
+                }
+        }
+    }
+
+    // 특정 데이터베이스 참조에 텍스트 저장 함수 1
+    private fun saveTextToDatabase1(text: String, context: Context) {
+        saveTextToDatabase(dataMotor1, text, context)
+    }
+
+    // 특정 데이터베이스 참조에 텍스트 저장 함수 2
+    private fun saveTextToDatabase2(text: String, context: Context) {
+        saveTextToDatabase(dataMotor2, text, context)
+    }
+
+    private fun realTimeClock() {
+        //시간 로직 구현
 
 
     }
+}
+
 
 
     private fun sendHttpRequest() {
@@ -124,14 +177,11 @@ class MainActivity : AppCompatActivity() {
                     val responseData = it.string()
                     val jsonResponse = JSONObject(responseData)
                     val temperature = jsonResponse.getInt("temperature")
-                    dataRef.push().setValue(mapOf("temperature" to temperature))
+                    data.push().setValue(mapOf("temperature" to temperature))
                 }
             }
         })
     }
 
-    companion object {
-        private const val TAG = "MainActivity"
-    }
-}
+
 
