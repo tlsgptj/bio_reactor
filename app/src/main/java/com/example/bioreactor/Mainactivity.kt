@@ -3,53 +3,63 @@ package com.example.bioreactor
 import MqttClientManager
 import android.os.Bundle
 import android.util.Log
+import android.widget.Button
+import android.widget.EditText
 import android.widget.TextView
+import android.widget.VideoView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.FirebaseApp
 import com.google.firebase.database.*
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import org.eclipse.paho.android.service.MqttAndroidClient
-import org.eclipse.paho.client.mqttv3.IMqttActionListener
-import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken
-import org.eclipse.paho.client.mqttv3.IMqttToken
-import org.eclipse.paho.client.mqttv3.MqttCallback
-import org.eclipse.paho.client.mqttv3.MqttClient
-import org.eclipse.paho.client.mqttv3.MqttException
-import org.eclipse.paho.client.mqttv3.MqttMessage
 import org.json.JSONObject
 import java.io.IOException
 
 class MainActivity : AppCompatActivity() {
-    private lateinit var
 
-
-    // Firebase 데이터베이스 인스턴스 및 데이터베이스 참조
+    private lateinit var UV_button : Button
+    private lateinit var Video: VideoView
+    private lateinit var time: TextView
+    private lateinit var recycler_result: RecyclerView
+    private lateinit var motor_text1: EditText
+    private lateinit var motor_text2: EditText
+    private lateinit var recycler_chart: RecyclerView
     private lateinit var database: FirebaseDatabase
     private lateinit var dataRef: DatabaseReference
-    private lateinit var mqttClientManager: MqttClientManager
+    private lateinit var dataUV : DatabaseReference
+    private lateinit var datatime : DatabaseReference
+    private var isUVON = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_mainactivity)
 
-        //서버 경로 추가
-        mqttClientManager = MqttClientManager(this, "tcp://broker-url:1883", "tlsgptj")
-        //MQTT 테스트
-        mqttClientManager.connect(object : IMqttActionListener {
-            override fun onSuccess(asyncActionToken: IMqttToken?) {
-                mqttClientManager.subscribe("myTopic", 1)
-            }
+        //초기화
+        UV_button = UV_button.findViewById<Button>(R.id.UV)
+        Video = Video.findViewById<VideoView>(R.id.Video)
+        time = time.findViewById<TextView>(R.id.time)
+        motor_text1 = motor_text1.findViewById<EditText>(R.id.motor_text1)
+        motor_text2 = motor_text2.findViewById<EditText>(R.id.motor_text2)
 
-            override fun onFailure(asyncActionToken: IMqttToken?, exception: Throwable?) {
-                Log.d("fail", "failed")
+        UV_button.setOnClickListener {
+            //버튼은 on, off만 될 수 있도록 설정해야함
+            if (isUVON) {
+                turnOffUV()
+            } else {
+                turnONUV()
             }
+            isUVON = !isUVON
+        }
 
-        })
+
         // Firebase 데이터베이스 인스턴스 초기화
         FirebaseApp.initializeApp(this)
         database = FirebaseDatabase.getInstance()
-        dataRef = database.getReference("data") // "data" 경로를 가리키는 데이터베이스 참조
+        dataRef = database.getReference("temp") // "data" 경로를 가리키는 데이터베이스 참조
+        dataUV = database.getReference("UV")
+        datatime = database.getReference("time")
+
 
         // 데이터 읽기를 위한 ValueEventListener 설정
         val valueEventListener = object : ValueEventListener {
@@ -77,61 +87,15 @@ class MainActivity : AppCompatActivity() {
         // ValueEventListener를 데이터베이스 참조에 추가하여 데이터를 실시간으로 가져옴
         dataRef.addValueEventListener(valueEventListener)
 
-        // MQTT 연결 및 데이터 수신
-        setupMqtt()
 
         // HTTP 요청 및 데이터 전송
         sendHttpRequest()
     }
+    private fun turnONUV() {
 
-    private fun setupMqtt() {
-        val clientId = MqttClient.generateClientId()
-        val mqttClient = MqttAndroidClient(this.applicationContext, "tcp://broker.hivemq.com:1883", clientId)
 
-        try {
-            mqttClient.connect().actionCallback = object : IMqttActionListener {
-                override fun onSuccess(asyncActionToken: IMqttToken) {
-                    Log.d(TAG, "Connected to MQTT broker")
-
-                    mqttClient.subscribe("sensor/temperature", 0, object : IMqttActionListener {
-                        override fun onSuccess(asyncActionToken: IMqttToken) {
-                            Log.d(TAG, "Subscribed to topic")
-                        }
-
-                        override fun onFailure(asyncActionToken: IMqttToken, exception: Throwable) {
-                            Log.e(TAG, "Failed to subscribe to topic", exception)
-                        }
-                    })
-
-                    mqttClient.setCallback(object : MqttCallback {
-                        override fun connectionLost(cause: Throwable?) {
-                            Log.e(TAG, "Connection lost", cause)
-                        }
-
-                        override fun messageArrived(topic: String, message: MqttMessage) {
-                            val temperature = message.toString()
-                            Log.d(TAG, "Message arrived: $temperature")
-                            dataRef.push().setValue(mapOf("temperature" to temperature))
-
-                            val data = HashMap<String, Any>()
-                            data["temperature"] = temperature
-                            dataRef.push().setValue((data))
-                        }
-
-                        override fun deliveryComplete(token: IMqttDeliveryToken) {
-                            // No action needed
-                        }
-                    })
-                }
-
-                override fun onFailure(asyncActionToken: IMqttToken, exception: Throwable) {
-                    Log.e(TAG, "Failed to connect to MQTT broker", exception)
-                }
-            }
-        } catch (e: MqttException) {
-            e.printStackTrace()
-        }
     }
+
 
     private fun sendHttpRequest() {
         val client = OkHttpClient()
