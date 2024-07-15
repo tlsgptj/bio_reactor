@@ -177,7 +177,7 @@ class MainActivity : AppCompatActivity() {
                     val responseData = it.string()
                     val jsonResponse = JSONObject(responseData)
                     val temperature = jsonResponse.getInt("temperature")
-                    data.push().setValue(mapOf("temperature" to temperature))
+                    //responseData.setValue(mapOf("temperature" to temperature))
                 }
             }
         })
