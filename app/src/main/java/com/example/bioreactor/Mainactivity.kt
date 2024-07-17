@@ -19,7 +19,7 @@ import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import org.json.JSONObject
 import java.io.IOException
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), Runnable {
 
     private lateinit var UV_button : Button
     private lateinit var Video: VideoView
@@ -51,7 +51,6 @@ class MainActivity : AppCompatActivity() {
         time = time.findViewById<TextView>(R.id.time)
         motor_text1 = motor_text1.findViewById<EditText>(R.id.motor_text1)
         motor_text2 = motor_text2.findViewById<EditText>(R.id.motor_text2)
-
 
         // Firebase 데이터베이스 인스턴스 초기화
         FirebaseApp.initializeApp(this)
@@ -90,7 +89,6 @@ class MainActivity : AppCompatActivity() {
         }
         realTime()
 
-
         // 온도를 데이터에 받아와서 저장합니다.
         val valueEventListener = object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -119,7 +117,7 @@ class MainActivity : AppCompatActivity() {
         dataRef.addValueEventListener(valueEventListener)
 
         // HTTP 요청 및 데이터 전송
-        sendHttpRequest()
+        sendFirebaseRequest()
     }
     //기기 가동시간 측정
     private fun realTime() {
@@ -164,39 +162,51 @@ class MainActivity : AppCompatActivity() {
 
 }
 
+//메세지
+private fun sendFirebaseRequest() {
+    val client = OkHttpClient()
+    val url = "https://bioreactor-bb6b7-default-rtdb.asia-southeast1.firebasedatabase.app" // Firebase Realtime Database의 URL로 변경
 
-private fun sendHttpRequest() {
-        val client = OkHttpClient()
-        val url = "https://api.example.com/sensor"
+    val json = JSONObject()
+    json.put("temp1", 25)
+    json.put("temp2", 25)
+    json.put("temp3", 25)
+    json.put("temp4", 25)
+    json.put("temp5", 25)
+    json.put("temp6", 25)
+    json.put("temp7", 25)
+    json.put("temp8", 25)
+    json.put("temp9", 25)
+    json.put("temp10", 25)
+    json.put("temp11", 25)
+    json.put("temp12", 25)
 
-        val json = JSONObject()
-        json.put("temperature", 25)
 
-        val body = RequestBody.create(
-            "application/json; charset=utf-8".toMediaTypeOrNull(),
-            json.toString()
-        )
+    val body = RequestBody.create(
+        "application/json; charset=utf-8".toMediaTypeOrNull(),
+        json.toString()
+    )
 
-        val request = Request.Builder()
-            .url(url)
-            .post(body)
-            .build()
+    val request = Request.Builder()
+        .url(url)
+        .post(body)
+        .build()
 
-        client.newCall(request).enqueue(object : Callback {
-            override fun onFailure(call: Call, e: IOException) {
-                Log.e(TAG, "HTTP request failed", e)
+    client.newCall(request).enqueue(object : Callback {
+        override fun onFailure(call: Call, e: IOException) {
+            Log.e(TAG, "HTTP request failed", e)
+        }
+
+        override fun onResponse(call: Call, response: Response) {
+            response.body?.let {
+                val responseData = it.string()
+                Log.d(TAG, "Response: $responseData")
+                // 여기서 필요한 추가 작업을 수행할 수 있습니다.
             }
+        }
+    })
+}
 
-            override fun onResponse(call: Call, response: Response) {
-                response.body?.let {
-                    val responseData = it.string()
-                    val jsonResponse = JSONObject(responseData)
-                    val temperature = jsonResponse.getInt("temperature")
-                    //responseData.setValue(mapOf("temperature" to temperature))
-                }
-            }
-        })
-    }
 
 
 

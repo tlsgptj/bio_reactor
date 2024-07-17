@@ -58,24 +58,25 @@ class ChartAdapter(private val context: Context, private val chartDataList: List
         holder.binding.chartContainer.addView(motorChart2)
 
         // Check if goal is reached and send FCM message
-        if (isGoalReached(position)) {
+        if (isGoalReached(chartData)) {
             val message = "Goal reached for chart $position"
             sendFCMMessage("goal_reached", message)
         }
     }
-    private fun isGoalReached(chartData: resultChartData): Boolean {
 
+    private fun isGoalReached(chartData: resultChartData): Boolean {
+        // Check each temperature chart
         for (i in 1..12) {
             val fieldName = "Temp$i"
             val data = chartData.getField(fieldName) ?: continue
-            val threshold = if (i in 1..12) chartData.Temp1[i-1] else continue
+            val threshold = chartData.thresholds[fieldName] ?: continue // Adjust to use correct threshold
             val minData = data.min() ?: continue
             if (minData <= threshold) {
                 return true
             }
         }
 
-        // 다른 데이터들도 확인할 수 있도록 chartData.otherData를 이용하여 처리합니다.
+        // Check other data
         for ((label, data) in chartData.otherData) {
             val threshold = chartData.thresholds[label] ?: continue
             val minData = data.min() ?: continue
@@ -86,7 +87,6 @@ class ChartAdapter(private val context: Context, private val chartDataList: List
 
         return false
     }
-
 
     private fun createChart(label: String, data: List<Float>): LineChart {
         val lineChart = LineChart(context)
