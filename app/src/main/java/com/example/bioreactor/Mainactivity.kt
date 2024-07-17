@@ -3,6 +3,7 @@ package com.example.bioreactor
 import android.content.ContentValues.TAG
 import android.content.Context
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
 import android.widget.Button
 import android.widget.EditText
@@ -36,6 +37,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var dataID : DatabaseReference
     private lateinit var dataPW : DatabaseReference
     private lateinit var dataMotor2 : DatabaseReference
+    private var handler = Handler()
+    private lateinit var runnable : Runnable
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -83,7 +86,9 @@ class MainActivity : AppCompatActivity() {
                     Log.d("failed", "실패요~~~~~")
                 }
             })
+
         }
+        realTime()
 
 
         // 온도를 데이터에 받아와서 저장합니다.
@@ -116,6 +121,21 @@ class MainActivity : AppCompatActivity() {
         // HTTP 요청 및 데이터 전송
         sendHttpRequest()
     }
+    //기기 가동시간 측정
+    private fun realTime() {
+        handler.post(runnable)
+        run()
+    }
+    fun run() {
+        val uptime = UptimeUtil.getUptime()
+        time.text = uptime
+        handler.postDelayed(this, 1000)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        handler.removeCallbacks(runnable)
+    }
     //모터 제어 함수
     private fun saveTextToDatabase(reference: DatabaseReference, text: String, context: Context) {
         val key = reference.push().key
@@ -141,16 +161,11 @@ class MainActivity : AppCompatActivity() {
         saveTextToDatabase(dataMotor2, text, context)
     }
 
-    private fun realTimeClock() {
-        //시간 로직 구현
 
-
-    }
 }
 
 
-
-    private fun sendHttpRequest() {
+private fun sendHttpRequest() {
         val client = OkHttpClient()
         val url = "https://api.example.com/sensor"
 

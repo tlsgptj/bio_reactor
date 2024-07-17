@@ -16,6 +16,10 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    buildFeatures {
+        dataBinding = true
+    }
+
     namespace = "com.example.bioreactor"
 
     buildTypes {
