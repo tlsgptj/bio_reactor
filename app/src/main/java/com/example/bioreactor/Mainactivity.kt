@@ -17,7 +17,6 @@ import com.google.firebase.FirebaseApp
 import com.google.firebase.database.*
 
 class MainActivity : AppCompatActivity(), Runnable {
-
     private lateinit var UV_button : Button
     private lateinit var Video: VideoView
     private lateinit var time: TextView
