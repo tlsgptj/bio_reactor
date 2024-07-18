@@ -5,8 +5,6 @@ import android.content.Context
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
-import android.view.View
-import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
@@ -17,10 +15,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.FirebaseApp
 import com.google.firebase.database.*
-import okhttp3.*
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import org.json.JSONObject
-import java.io.IOException
 
 class MainActivity : AppCompatActivity(), Runnable {
 
@@ -67,6 +61,7 @@ class MainActivity : AppCompatActivity(), Runnable {
         dataMotor1 = database.getReference("motor")
         dataMotor2 = database.getReference("motor1")
 
+
         UV_button.setOnClickListener {
             dataUV.addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -93,7 +88,6 @@ class MainActivity : AppCompatActivity(), Runnable {
                         chartDataList.add(it)
                     }
                 }
-                chartAdapter.setData(chartDataList)
             }
 
             override fun onCancelled(databaseError: DatabaseError) {
@@ -101,11 +95,13 @@ class MainActivity : AppCompatActivity(), Runnable {
             }
         }
 
-        recycler_chart.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
-        chartAdapter = ChartAdapter(this, emptyList()) // 초기에는 빈 데이터로 설정
-        recycler_chart.adapter = chartAdapter
+        recycler_result.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+        resultAdapter = ViewAdapter(emptyList()) // 초기에는 빈 데이터로 설정
+        recycler_result.adapter = resultAdapter
 
-        dataRef.addValueEventListener(valueEventListener)
+        recycler_chart.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+        chartViewAdapter = chartViewAdapter(this, emptyList()) // 초기에는 빈 데이터로 설정
+        recycler_chart.adapter = chartViewAdapter
 
         // Runnable 초기화 및 핸들러 시작
         runnable = this
