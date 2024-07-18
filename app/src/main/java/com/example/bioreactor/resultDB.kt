@@ -25,8 +25,8 @@ class resultDB(private val context: Context) {
                     val temp8 = childSnapshot.child("temp8").getValue(Float::class.java) ?: 0.0f
                     val temp9 = childSnapshot.child("temp9").getValue(Float::class.java) ?: 0.0f
                     val temp10 = childSnapshot.child("temp10").getValue(Float::class.java) ?: 0.0f
-                    val temp11 = childSnapshot.child("temp10").getValue(Float::class.java) ?: 0.0f
-                    val temp12 = childSnapshot.child("temp10").getValue(Float::class.java) ?: 0.0f
+                    val temp11 = childSnapshot.child("temp11").getValue(Float::class.java) ?: 0.0f
+                    val temp12 = childSnapshot.child("temp12").getValue(Float::class.java) ?: 0.0f
                     val ph = childSnapshot.child("ph").getValue(Float::class.java) ?: 0.0f
                     val motorSpeed = childSnapshot.child("motor").getValue(Float::class.java) ?: 0
                     val motorSpeed1 = childSnapshot.child("motor1").getValue(Float::class.java) ?: 0
