@@ -8,87 +8,68 @@ import androidx.recyclerview.widget.RecyclerView
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
+import com.example.bioreactor.databinding.ActivityChartViewBinding
+import com.github.mikephil.charting.data.Entry
 
+class chartViewAdapter(private val context: Context, private var chartDataList: List<resultChartData>) : RecyclerView.Adapter<chartViewAdapter.ChartViewHolder>() {
 
-class ChartAdapter(private val context: Context, private val chartDataList: List<resultChartData>) : RecyclerView.Adapter<ChartAdapter.ChartViewHolder>() {
-
-    class ChartViewHolder(val binding: ItemChartBinding) : RecyclerView.ViewHolder(binding.root)
+    inner class ChartViewHolder(val binding: ActivityChartViewBinding) : RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChartViewHolder {
-        val binding = ItemChartBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding = ActivityChartViewBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return ChartViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: ChartViewHolder, position: Int) {
         val chartData = chartDataList[position]
+        val temp1 = createChart("temp1", chartData.temp1, chartData.time)
+        val temp2 = createChart("temp2", chartData.temp2, chartData.time)
+        val temp3 = createChart("temp3", chartData.temp3, chartData.time)
+        val temp4 = createChart("temp4", chartData.temp4, chartData.time)
+        val temp5 = createChart("temp5", chartData.temp5, chartData.time)
+        val temp6 = createChart("temp6", chartData.temp6, chartData.time)
+        val temp7 = createChart("temp7", chartData.temp7, chartData.time)
+        val temp8 = createChart("temp8", chartData.temp8, chartData.time)
+        val temp9 = createChart("temp9", chartData.temp9, chartData.time)
+        val temp10 = createChart("pH", chartData.temp10, chartData.time)
+        val temp11 = createChart("pH", chartData.temp11, chartData.time)
+        val temp12 = createChart("pH", chartData.temp12, chartData.time)
+        val phChart = createChart("pH", chartData.ph, chartData.time)
+        val motorChart1 = createChart("Motor1", chartData.motor, chartData.time)
+        val motorChart2 = createChart("Motor2", chartData.motor1, chartData.time)
 
-        holder.binding.chartTitle.text = "Results"
-        holder.binding.chartContainer.removeAllViews()
 
-        // Create temperature charts
-        val temperatureCharts = listOf(
-            createChart("Temperature1", chartData.Temp1),
-            createChart("Temperature2", chartData.Temp2),
-            createChart("Temperature3", chartData.Temp3),
-            createChart("Temperature4", chartData.Temp4),
-            createChart("Temperature5", chartData.Temp5),
-            createChart("Temperature6", chartData.Temp6),
-            createChart("Temperature7", chartData.Temp7),
-            createChart("Temperature8", chartData.Temp8),
-            createChart("Temperature9", chartData.Temp9),
-            createChart("Temperature10", chartData.Temp10),
-            createChart("Temperature11", chartData.Temp11),
-            createChart("Temperature12", chartData.Temp12)
-        )
+        holder.binding.resultGraph.addView(phChart)
+        holder.binding.resultGraph.addView(motorChart1)
+        holder.binding.resultGraph.addView(motorChart2)
 
-        // Add temperature charts to container
-        temperatureCharts.forEach {
-            holder.binding.chartContainer.addView(it)
-        }
-
-        // Create pH chart
-        val phChart = createChart("pH", chartData.PH)
-        holder.binding.chartContainer.addView(phChart)
-
-        // Create motor charts
-        val motorChart1 = createChart("Motor1", chartData.motor)
-        holder.binding.chartContainer.addView(motorChart1)
-
-        val motorChart2 = createChart("Motor2", chartData.motor1)
-        holder.binding.chartContainer.addView(motorChart2)
-
-        // Check if goal is reached and send FCM message
-        if (isGoalReached(chartData)) {
+       /* if (isGoalReached(chartData)) {
             val message = "Goal reached for chart $position"
             sendFCMMessage("goal_reached", message)
-        }
+        }*/
     }
 
-    private fun isGoalReached(chartData: resultChartData): Boolean {
-        // Check each temperature chart
+    override fun getItemCount() = chartDataList.size
+
+    fun setData(data: List<resultChartData>) {
+        chartDataList = data
+        notifyDataSetChanged()
+    }
+
+    /*private fun isGoalReached(chartData: resultChartData): Boolean {
         for (i in 1..12) {
             val fieldName = "Temp$i"
-            val data = chartData.getField(fieldName) ?: continue
-            val threshold = chartData.thresholds[fieldName] ?: continue // Adjust to use correct threshold
-            val minData = data.min() ?: continue
+            val data = chartData.getField(fieldName) ?: emptyList()
+            val threshold = chartData.thresholds[fieldName] ?: 0f
+            val minData = data.minOrNull() ?: Float.MAX_VALUE
             if (minData <= threshold) {
                 return true
             }
         }
-
-        // Check other data
-        for ((label, data) in chartData.otherData) {
-            val threshold = chartData.thresholds[label] ?: continue
-            val minData = data.min() ?: continue
-            if (minData <= threshold) {
-                return true
-            }
-        }
-
         return false
-    }
+    }*/
 
-    private fun createChart(label: String, data: List<Float>): LineChart {
+    private fun createChart(label: String, data: List<Float>, timeData: List<Float>): LineChart {
         val lineChart = LineChart(context)
         val layoutParams = FrameLayout.LayoutParams(
             FrameLayout.LayoutParams.MATCH_PARENT,
@@ -96,7 +77,12 @@ class ChartAdapter(private val context: Context, private val chartDataList: List
         )
         lineChart.layoutParams = layoutParams
 
-        val dataSet = LineDataSet(data, label)
+        val entries = mutableListOf<Entry>()
+        data.forEachIndexed { index, value ->
+            entries.add(Entry(timeData[index], value))
+        }
+
+        val dataSet = LineDataSet(entries, label)
         val lineData = LineData(dataSet)
         lineChart.data = lineData
         lineChart.invalidate()
@@ -104,5 +90,7 @@ class ChartAdapter(private val context: Context, private val chartDataList: List
         return lineChart
     }
 
-    override fun getItemCount() = chartDataList.size
+    fun sendFCMMessage(topic: String, message: String) {
+        // FCM 메시지 전송 로직 추가
+    }
 }

@@ -5,12 +5,15 @@ import android.content.Context
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
+import android.view.View
+import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import android.widget.VideoView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.FirebaseApp
 import com.google.firebase.database.*
@@ -34,107 +37,92 @@ class MainActivity : AppCompatActivity(), Runnable {
     private lateinit var datatime : DatabaseReference
     private lateinit var dataPH : DatabaseReference
     private lateinit var dataMotor1 : DatabaseReference
-    private lateinit var dataID : DatabaseReference
-    private lateinit var dataPW : DatabaseReference
     private lateinit var dataMotor2 : DatabaseReference
     private var handler = Handler()
+    private lateinit var resultAdapter: ViewAdapter
+    private lateinit var chartViewAdapter: chartViewAdapter
+    private lateinit var chartViewHolder: chartViewAdapter.ChartViewHolder
     private lateinit var runnable : Runnable
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_mainactivity)
 
-        //초기화
-        UV_button = UV_button.findViewById<Button>(R.id.UV)
-        Video = Video.findViewById<VideoView>(R.id.Video)
-        time = time.findViewById<TextView>(R.id.time)
-        motor_text1 = motor_text1.findViewById<EditText>(R.id.motor_text1)
-        motor_text2 = motor_text2.findViewById<EditText>(R.id.motor_text2)
+        // 초기화
+        UV_button = findViewById(R.id.UV)
+        Video = findViewById(R.id.Video)
+        time = findViewById(R.id.time)
+        motor_text1 = findViewById(R.id.motor_text1)
+        motor_text2 = findViewById(R.id.motor_text2)
+        recycler_result = findViewById<RecyclerView>(R.id.recycler_result)
+        recycler_chart = findViewById<RecyclerView>(R.id.recycler_chart)
 
         // Firebase 데이터베이스 인스턴스 초기화
         FirebaseApp.initializeApp(this)
         database = FirebaseDatabase.getInstance()
-        dataRef = database.getReference("temp") // "data" 경로를 가리키는 데이터베이스 참조
+        dataRef = database.getReference("temp")
         dataUV = database.getReference("UV")
         datatime = database.getReference("time")
         dataPH = database.getReference("PH")
-        dataID = database.getReference("ID")
-        dataPW = database.getReference("PW")
         dataMotor1 = database.getReference("motor")
         dataMotor2 = database.getReference("motor1")
 
         UV_button.setOnClickListener {
-            //버튼은 on, off만 될 수 있도록 설정해야함
             dataUV.addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
                     val isUVOn = dataSnapshot.getValue(Boolean::class.java) ?: false
-
-                    // UV 상태에 따라 동작을 수행
                     if (isUVOn) {
-                        // UV가 켜져 있는 경우
-                        //색깔 바뀌는 함수 추가
                         dataUV.setValue("false")
                     } else {
-                        // UV가 꺼져 있는 경우
                         dataUV.setValue("true")
                     }
-
                 }
+
                 override fun onCancelled(databaseError: DatabaseError) {
                     Log.d("failed", "실패요~~~~~")
                 }
             })
-
         }
-        realTime()
 
-        // 온도를 데이터에 받아와서 저장합니다.
         val valueEventListener = object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
-                // 데이터가 변경될 때 호출됨
+                val chartDataList = mutableListOf<resultChartData>()
                 for (snapshot in dataSnapshot.children) {
-                    val sensorData = snapshot.getValue(SensorData::class.java)
-                    // 온도 데이터 추출 및 처리
-                    sensorData?.let {
-                        val temperatures = listOfNotNull(
-                            it.temp1, it.temp2, it.temp3, it.temp4, it.temp5,
-                            it.temp6, it.temp7, it.temp8, it.temp9, it.temp10
-                        )
-                        Log.d(TAG, "Temperatures: $temperatures")
-
+                    val chartData = snapshot.getValue(resultChartData::class.java)
+                    chartData?.let {
+                        chartDataList.add(it)
                     }
                 }
+                chartAdapter.setData(chartDataList)
             }
 
             override fun onCancelled(databaseError: DatabaseError) {
-                // 데이터 읽기가 실패한 경우 호출됨
                 Log.w(TAG, "Failed to read value.", databaseError.toException())
             }
         }
 
-        // ValueEventListener를 데이터베이스 참조에 추가하여 데이터를 실시간으로 가져옴
+        recycler_chart.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+        chartAdapter = ChartAdapter(this, emptyList()) // 초기에는 빈 데이터로 설정
+        recycler_chart.adapter = chartAdapter
+
         dataRef.addValueEventListener(valueEventListener)
 
-        // HTTP 요청 및 데이터 전송
-        sendFirebaseRequest()
-    }
-    //기기 가동시간 측정
-    private fun realTime() {
+        // Runnable 초기화 및 핸들러 시작
+        runnable = this
         handler.post(runnable)
-        run()
-    }
-    fun run() {
-        val uptime = UptimeUtil.getUptime()
-        time.text = uptime
-        handler.postDelayed(this, 1000)
     }
 
     override fun onDestroy() {
         super.onDestroy()
         handler.removeCallbacks(runnable)
     }
-    //모터 제어 함수
+
+    override fun run() {
+        // 반복 실행할 코드 추가
+        // 예: 일정 시간 간격으로 데이터베이스 업데이트
+        handler.postDelayed(runnable, 1000) // 1초마다 실행
+    }
+
     private fun saveTextToDatabase(reference: DatabaseReference, text: String, context: Context) {
         val key = reference.push().key
         if (key != null) {
@@ -149,64 +137,14 @@ class MainActivity : AppCompatActivity(), Runnable {
         }
     }
 
-    // 특정 데이터베이스 참조에 텍스트 저장 함수 1
     private fun saveTextToDatabase1(text: String, context: Context) {
         saveTextToDatabase(dataMotor1, text, context)
     }
 
-    // 특정 데이터베이스 참조에 텍스트 저장 함수 2
     private fun saveTextToDatabase2(text: String, context: Context) {
         saveTextToDatabase(dataMotor2, text, context)
     }
-
-
 }
-
-//메세지
-private fun sendFirebaseRequest() {
-    val client = OkHttpClient()
-    val url = "https://bioreactor-bb6b7-default-rtdb.asia-southeast1.firebasedatabase.app" // Firebase Realtime Database의 URL로 변경
-
-    val json = JSONObject()
-    json.put("temp1", 25)
-    json.put("temp2", 25)
-    json.put("temp3", 25)
-    json.put("temp4", 25)
-    json.put("temp5", 25)
-    json.put("temp6", 25)
-    json.put("temp7", 25)
-    json.put("temp8", 25)
-    json.put("temp9", 25)
-    json.put("temp10", 25)
-    json.put("temp11", 25)
-    json.put("temp12", 25)
-
-
-    val body = RequestBody.create(
-        "application/json; charset=utf-8".toMediaTypeOrNull(),
-        json.toString()
-    )
-
-    val request = Request.Builder()
-        .url(url)
-        .post(body)
-        .build()
-
-    client.newCall(request).enqueue(object : Callback {
-        override fun onFailure(call: Call, e: IOException) {
-            Log.e(TAG, "HTTP request failed", e)
-        }
-
-        override fun onResponse(call: Call, response: Response) {
-            response.body?.let {
-                val responseData = it.string()
-                Log.d(TAG, "Response: $responseData")
-                // 여기서 필요한 추가 작업을 수행할 수 있습니다.
-            }
-        }
-    })
-}
-
 
 
 

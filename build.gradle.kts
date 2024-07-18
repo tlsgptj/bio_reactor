@@ -12,7 +12,7 @@ buildscript {
         maven { url = uri ("https://raw.githubusercontent.com/alexgreench/google-webrtc/master") }
     }
     dependencies {
-        classpath ("com.android.tools.build:gradle:4.2.2")
+        classpath ("com.android.tools.build:gradle:4.4.2")
         classpath ("com.google.gms:google-services:4.4.2") // Google Services plugin
     }
 }

@@ -1,6 +1,7 @@
 plugins {
     id("com.android.application")
     id("kotlin-android")
+    id ("kotlin-kapt")
     id("com.google.gms.google-services")
 }
 
@@ -18,6 +19,7 @@ android {
 
     buildFeatures {
         dataBinding = true
+        viewBinding = true
     }
 
     namespace = "com.example.bioreactor"
@@ -43,6 +45,7 @@ android {
 }
 
 dependencies {
+    implementation ("androidx.recyclerview:recyclerview:1.2.1")
     implementation ("org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.1.1")
     implementation ("org.eclipse.paho:org.eclipse.paho.android.service:1.1.1")
     implementation("com.squareup.okhttp3:okhttp:4.9.3")
@@ -57,6 +60,7 @@ dependencies {
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
     implementation(libs.firebase.database.ktx)
+    implementation(libs.firebase.firestore.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

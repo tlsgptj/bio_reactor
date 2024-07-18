@@ -7,7 +7,7 @@
     android:layout_height="130dp">
 
     <com.github.mikephil.charting.charts.CombinedChart
-        android:id="@+id/result_graph"
+        android:id="@+id/resultGraph"
         android:layout_width="130dp"
         android:layout_height="130dp"/>
 

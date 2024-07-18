@@ -11,8 +11,9 @@ data class SensorData(
     val temp8: Float? = null,
     val temp9: Float? = null,
     val temp10: Float? = null,
+    val temp11:Float? = null,
+    val temp12:Float? = null,
     val Ph: Float? = null,
     val motorSpeed: Int? = null,
     val motorSpeed1: Int? = null,
-    val timestamp: Long? = null,
 )

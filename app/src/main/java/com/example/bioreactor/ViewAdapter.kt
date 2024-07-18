@@ -6,20 +6,49 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
-class RecyclerViewAdapter : RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder>() {
+class ViewAdapter : RecyclerView.Adapter<ViewAdapter.ViewHolder>() {
 
     private var dataList: List<SensorData> = listOf()
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val nameTextView: TextView = itemView.findViewById(R.id.Search_Value)
-        private val thingTextView: TextView = itemView.findViewById(R.id.Search_thing)
+        private val temp1TextView: TextView = itemView.findViewById(R.id.Search_temp1)
+        private val temp2TextView: TextView = itemView.findViewById(R.id.Search_temp2)
+        private val temp3TextView: TextView = itemView.findViewById(R.id.Search_temp3)
+        private val temp4TextView: TextView = itemView.findViewById(R.id.Search_temp4)
+        private val temp5TextView: TextView = itemView.findViewById(R.id.Search_temp5)
+        private val temp6TextView: TextView = itemView.findViewById(R.id.Search_temp6)
+        private val temp7TextView: TextView = itemView.findViewById(R.id.Search_temp7)
+        private val temp8TextView: TextView = itemView.findViewById(R.id.Search_temp8)
+        private val temp9TextView: TextView = itemView.findViewById(R.id.Search_temp9)
+        private val temp10TextView: TextView = itemView.findViewById(R.id.Search_temp10)
+        private val temp11TextView: TextView = itemView.findViewById(R.id.Search_temp11)
+        private val temp12TextView: TextView = itemView.findViewById(R.id.Search_temp12)
+        private val motor1TextView: TextView = itemView.findViewById(R.id.Search_motor1)
+        private val motor2TextView: TextView = itemView.findViewById(R.id.Search_motor2)
+        private val PHTextView: TextView = itemView.findViewById(R.id.Search_PH)
+
         // 여기서 필요한 다른 뷰들도 마찬가지로 findViewById로 초기화합니다
 
         fun bind(sensorData: SensorData) {
-            nameTextView.text = resultChartValue.COLUMN_NAME
-            thingTextView.text = dataList.toString()
-            // 여기서 필요한 다른 데이터들도 적절히 바인딩합니다
+            temp1TextView.text = sensorData.temp1?.toString() ?: "N/A"
+            temp2TextView.text = sensorData.temp2?.toString() ?: "N/A"
+            temp3TextView.text = sensorData.temp3?.toString() ?: "N/A"
+            temp4TextView.text = sensorData.temp4?.toString() ?: "N/A"
+            temp5TextView.text = sensorData.temp5?.toString() ?: "N/A"
+            temp6TextView.text = sensorData.temp6?.toString() ?: "N/A"
+            temp7TextView.text = sensorData.temp7?.toString() ?: "N/A"
+            temp8TextView.text = sensorData.temp8?.toString() ?: "N/A"
+            temp9TextView.text = sensorData.temp9?.toString() ?: "N/A"
+            temp10TextView.text = sensorData.temp10?.toString() ?: "N/A"
+            temp11TextView.text = sensorData.temp11?.toString() ?: "N/A"
+            temp12TextView.text = sensorData.temp12?.toString() ?: "N/A"
+            motor1TextView.text = sensorData.motorSpeed?.toString() ?: "N/A"
+            motor2TextView.text = sensorData.motorSpeed1?.toString() ?: "N/A"
+            PHTextView.text = sensorData.Ph?.toString() ?: "N/A"
+
+            // 필요한 다른 데이터들도 위와 같이 적절히 바인딩합니다
         }
+
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
