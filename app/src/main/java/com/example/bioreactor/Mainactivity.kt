@@ -43,7 +43,7 @@ class MainActivity : AppCompatActivity(), Runnable {
 
         // 초기화
         UV_button = findViewById(R.id.UV)
-        Video = findViewById(R.id.Video)
+        Video = findViewById(R.id.Video)//안됨
         time = findViewById(R.id.time)
         motor_text1 = findViewById(R.id.motor_text1)
         motor_text2 = findViewById(R.id.motor_text2)

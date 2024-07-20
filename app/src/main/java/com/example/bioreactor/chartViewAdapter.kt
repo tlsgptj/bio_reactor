@@ -35,9 +35,8 @@ class chartViewAdapter(private val context: Context, private var chartDataList: 
         val temp11 = createChart("temp11", chartData.temp11, chartData.time)
         val temp12 = createChart("temp12", chartData.temp12, chartData.time)
         val phChart = createChart("pH", chartData.ph, chartData.time)
-        val motorChart1 = createChart("Motor1", chartData.motor, chartData.time)
-        val motorChart2 = createChart("Motor2", chartData.motor1, chartData.time)
-
+        //고쳐야함...오픈소스 MPAndroidChart (다 지워버리고)
+        //네개는 나와야함 온도 센서 1~3, 히터봉
         holder.binding.resultGraph.addView(temp1)
         holder.binding.resultGraph.addView(temp2)
         holder.binding.resultGraph.addView(temp3)
@@ -51,8 +50,6 @@ class chartViewAdapter(private val context: Context, private var chartDataList: 
         holder.binding.resultGraph.addView(temp11)
         holder.binding.resultGraph.addView(temp12)
         holder.binding.resultGraph.addView(phChart)
-        holder.binding.resultGraph.addView(motorChart1)
-        holder.binding.resultGraph.addView(motorChart2)
 
        /* if (isGoalReached(chartData)) {
             val message = "Goal reached for chart $position"
