@@ -38,7 +38,10 @@ data class resultChartData(
             "PH" -> ph
             "motor" -> motor
             "motor1" -> motor1
+            "time" -> time
             else -> null
         }
     }
+
+
 }

@@ -217,7 +217,7 @@
         android:id="@+id/value_motor1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="motor1"
+        android:text="heatTemp"
         android:textSize="10dp"
         tools:layout_editor_absoluteX="212dp"
         tools:layout_editor_absoluteY="85dp" />
@@ -234,7 +234,7 @@
         android:id="@+id/value_motor2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="motor2"
+        android:text="heatPow"
         android:textSize="10dp"
         tools:layout_editor_absoluteX="262dp"
         tools:layout_editor_absoluteY="85dp" />
