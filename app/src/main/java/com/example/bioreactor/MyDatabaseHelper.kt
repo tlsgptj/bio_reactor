@@ -9,61 +9,81 @@ class MyDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NA
     companion object {
         private const val DATABASE_NAME = "bioreactor.db"
         private const val DATABASE_VERSION = 1
-        private const val TABLE_NAME = "data"
+        private const val TABLE_PREFIX = "data_"
         private const val COLUMN_TIME = "time"
         private const val COLUMN_VALUE = "value"
-        private const val COLUMN_TEMP_ID = "id"
     }
-    //이거 id를 조금 더 세분화 할 필요가 있다고 봄
-    //1~12까지
 
     override fun onCreate(db: SQLiteDatabase) {
-        val createTable = "CREATE TABLE $TABLE_NAME (" +
-                "$COLUMN_TIME INTEGER, " +
-                "$COLUMN_VALUE REAL, " +
-                "$COLUMN_TEMP_ID INTEGER)"
-        db.execSQL(createTable)
+        // 각 ID에 대해 테이블 생성
+        for (tempId in 1..12) {
+            createTable(db, tempId)
+        }
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
-        db.execSQL("DROP TABLE IF EXISTS $TABLE_NAME")
+        for (tempId in 1..12) {
+            db.execSQL("DROP TABLE IF EXISTS ${TABLE_PREFIX}${tempId}")
+        }
         onCreate(db)
     }
 
-    fun insertData(data: data, tempId: Int) {
+    private fun createTable(db: SQLiteDatabase, tempId: Int) {
+        val createTable = "CREATE TABLE ${TABLE_PREFIX}${tempId} (" +
+                "$COLUMN_TIME INTEGER, " +
+                "$COLUMN_VALUE REAL)"
+        db.execSQL(createTable)
+    }
+
+    fun insertData(data: Data, tempId: Int) {
         val db = writableDatabase
+        val tableName = "${TABLE_PREFIX}${tempId}"
         val values = ContentValues().apply {
             put(COLUMN_TIME, data.time)
             put(COLUMN_VALUE, data.value)
-            put(COLUMN_TEMP_ID, tempId)
         }
-        db.insert(TABLE_NAME, null, values)
+        db.insert(tableName, null, values)
+        db.close()
     }
 
-    fun getDataGroupedByTempId(tempId: Int): List<data> {
+
+    fun getDataByAllTempIds(): Map<Int, List<Data>> {
         val db = readableDatabase
-        val cursor = db.query(
-            TABLE_NAME,
-            arrayOf(COLUMN_TIME, COLUMN_VALUE),
-            "$COLUMN_TEMP_ID = ?",
-            arrayOf(tempId.toString()),
-            null,
-            null,
-            COLUMN_TIME
-        )
+        val allData = mutableMapOf<Int, List<Data>>()
 
-        val dataList = mutableListOf<data>()
-        with(cursor) {
-            while (moveToNext()) {
-                val time = getLong(getColumnIndexOrThrow(COLUMN_TIME))
-                val value = getDouble(getColumnIndexOrThrow(COLUMN_VALUE))
-                dataList.add(data(time, value))
+        // 1부터 12까지의 tempId를 처리
+        for (tempId in 1..12) {
+            val tableName = "${TABLE_PREFIX}${tempId}"
+            val cursor = db.query(
+                tableName,
+                arrayOf(COLUMN_TIME, COLUMN_VALUE),
+                null,
+                null,
+                null,
+                null,
+                COLUMN_TIME
+            )
+
+            val dataList = mutableListOf<Data>()
+            with(cursor) {
+                while (moveToNext()) {
+                    val time = getLong(getColumnIndexOrThrow(COLUMN_TIME))
+                    val value = getDouble(getColumnIndexOrThrow(COLUMN_VALUE))
+                    dataList.add(Data(time, value, tempId))
+                }
+                close()
             }
-            close()
+
+            // tempId에 해당하는 데이터를 Map에 추가
+            allData[tempId] = dataList
         }
-        return dataList
+
+        db.close()
+        return allData
     }
+
 }
+
 
 
 

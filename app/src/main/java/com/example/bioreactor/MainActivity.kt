@@ -112,12 +112,11 @@ class MainActivity : AppCompatActivity(), Runnable {
     // 차트 데이터 리스너
     private val chartDataListener = object : ValueEventListener {
         override fun onDataChange(dataSnapshot: DataSnapshot) {
-            val chartDataList = mutableListOf<data>()
+            val chartDataList = mutableListOf<Data>()
             for (snapshot in dataSnapshot.children) {
-                val chartData = snapshot.getValue(data::class.java)
+                val chartData = snapshot.getValue(Data::class.java)
                 chartData?.let { chartDataList.add(it) }
             }
-            saveToSQLite(chartDataList)
             loadDataAndDisplayCharts()
         }
 
@@ -162,24 +161,38 @@ class MainActivity : AppCompatActivity(), Runnable {
         handler.postDelayed(runnable, 1000) // 1초마다 실행
     }
 
-    private fun saveToSQLite(dataList: List<data>) {
-        for (data in dataList) {
-            dbHelper.insertData(data, 0)
-        }
-    }
-
     private fun fetchDataFromFirebase() {
-        for (tempId in 1..12) {
+        val tempIds = 1..12 // 1부터 12까지의 tempId 목록
+
+        // 데이터가 모두 처리된 후 차트를 업데이트하기 위한 변수
+        var dataCount = 0
+        val totalTempIds = tempIds.count()
+
+        for (tempId in tempIds) {
             val tempRef = database.getReference("temp$tempId")
             tempRef.addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
+                    val dataList = mutableListOf<Data>()
+
                     for (child in snapshot.children) {
                         val time = child.child("time").getValue(Long::class.java) ?: continue
                         val value = child.child("value").getValue(Double::class.java) ?: continue
-                        val data = data(time, value)
-                        dbHelper.insertData(data, tempId)
+                        val dataEntry = Data(time, value, tempId)
+                        dataList.add(dataEntry)
                     }
-                    loadDataAndDisplayCharts()
+
+                    if (dataList.isNotEmpty()) {
+                        for (data in dataList) {
+                            dbHelper.insertData(data, tempId)
+                        }
+                    }
+
+                    dataCount++
+
+                    // 모든 tempId에 대한 데이터가 처리되었는지 확인
+                    if (dataCount == totalTempIds) {
+                        loadDataAndDisplayCharts()
+                    }
                 }
 
                 override fun onCancelled(error: DatabaseError) {
@@ -189,15 +202,25 @@ class MainActivity : AppCompatActivity(), Runnable {
         }
     }
 
+
+
     private fun loadDataAndDisplayCharts() {
         dataSets.clear()
+
+        // 모든 tempId의 데이터를 가져옵니다.
+        val allData = dbHelper.getDataByAllTempIds()
+
+        // 각 tempId에 대한 데이터 리스트를 처리합니다.
         for (tempId in 1..12) {
-            val data = dbHelper.getDataGroupedByTempId(tempId)
+            val data = allData[tempId] ?: emptyList()
             val entries = data.map { Entry(it.time.toFloat(), it.value.toFloat()) }
             dataSets.add(entries)
         }
+
+        // 차트 데이터를 업데이트합니다.
         chartViewAdapter.updateData(dataSets)
     }
+
 
     private fun saveTextToDatabase(reference: DatabaseReference, text: String, context: Context) {
         val key = reference.push().key

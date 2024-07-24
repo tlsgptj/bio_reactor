@@ -45,7 +45,6 @@ android {
 }
 
 dependencies {
-    implementation ("org.webrtc:google-webrtc:1.0.+")
     implementation ("androidx.recyclerview:recyclerview:1.3.2")
     implementation ("org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.2.5")
     implementation ("org.eclipse.paho:org.eclipse.paho.android.service:1.1.1")
@@ -68,16 +67,6 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
-}
-
-// :app:mapDebugSourceSetPaths 작업이 :app:processDebugGoogleServices에 의존하도록 설정
-tasks.register("yourCustomTaskName") {
-    dependsOn("processDebugGoogleServices")
-    doLast {
-        // processDebugGoogleServices 작업 완료 후에 속성에 접근
-       // val generatedResDir = project.tasks.getByName("processDebugGoogleServices").property("extraGeneratedResDir")
-        // 필요한 작업 수행
-    }
 }
 
 
