@@ -9,12 +9,13 @@ class MyDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NA
     companion object {
         private const val DATABASE_NAME = "bioreactor.db"
         private const val DATABASE_VERSION = 1
-
         private const val TABLE_NAME = "data"
         private const val COLUMN_TIME = "time"
         private const val COLUMN_VALUE = "value"
-        private const val COLUMN_TEMP_ID = "temp_id"
+        private const val COLUMN_TEMP_ID = "id"
     }
+    //이거 id를 조금 더 세분화 할 필요가 있다고 봄
+    //1~12까지
 
     override fun onCreate(db: SQLiteDatabase) {
         val createTable = "CREATE TABLE $TABLE_NAME (" +

@@ -37,10 +37,6 @@ class MainActivity : AppCompatActivity(), Runnable {
     private lateinit var dataMotor2: DatabaseReference
     private lateinit var databasePH: DatabaseReference
     private lateinit var storage: FirebaseStorage
-    private lateinit var storagetemp1: StorageReference
-    private lateinit var storagetemp2: StorageReference
-    private lateinit var storagetemp3: StorageReference
-    private lateinit var storagetemp4: StorageReference
     private lateinit var resultChartData: CombinedChart
 
     private val handler = Handler()
@@ -72,10 +68,6 @@ class MainActivity : AppCompatActivity(), Runnable {
         dataMotor2 = database.getReference("motor1")
         databasePH = database.getReference("PH")
         storage = FirebaseStorage.getInstance()
-        storagetemp1 = storage.reference.child("temp/temp1.csv")
-        storagetemp2 = storage.reference.child("temp/temp2.csv")
-        storagetemp3 = storage.reference.child("temp/temp3.csv")
-        storagetemp4 = storage.reference.child("temp/temp4.csv")
 
         // RecyclerView 설정
         recyclerResult.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
