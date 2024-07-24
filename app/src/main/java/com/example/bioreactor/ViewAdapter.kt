@@ -23,8 +23,8 @@ class ViewAdapter(emptyList: List<Any>) : RecyclerView.Adapter<ViewAdapter.ViewH
         private val temp10TextView: TextView = itemView.findViewById(R.id.Search_temp10)
         private val temp11TextView: TextView = itemView.findViewById(R.id.Search_temp11)
         private val temp12TextView: TextView = itemView.findViewById(R.id.Search_temp12)
-        private val motor1TextView: TextView = itemView.findViewById(R.id.Search_motor1)
-        private val motor2TextView: TextView = itemView.findViewById(R.id.Search_motor2)
+        private val heatTempTextView: TextView = itemView.findViewById(R.id.Search_heatTemp)
+        private val heatPow : TextView = itemView.findViewById(R.id.Search_heatPow)
         private val PHTextView: TextView = itemView.findViewById(R.id.Search_PH)
 
         // 여기서 필요한 다른 뷰들도 마찬가지로 findViewById로 초기화합니다
@@ -42,11 +42,9 @@ class ViewAdapter(emptyList: List<Any>) : RecyclerView.Adapter<ViewAdapter.ViewH
             temp10TextView.text = sensorData.temp10?.toString() ?: "N/A"
             temp11TextView.text = sensorData.temp11?.toString() ?: "N/A"
             temp12TextView.text = sensorData.temp12?.toString() ?: "N/A"
-            motor1TextView.text = sensorData.motorSpeed?.toString() ?: "N/A"
-            motor2TextView.text = sensorData.motorSpeed1?.toString() ?: "N/A"
+            heatTempTextView.text =sensorData.heattemp.toString() ?: "N/A"
+            heatPow.text = sensorData.heatPow.toString() ?: "N/A"
             PHTextView.text = sensorData.Ph?.toString() ?: "N/A"
-
-            // 필요한 다른 데이터들도 위와 같이 적절히 바인딩합니다
         }
 
     }

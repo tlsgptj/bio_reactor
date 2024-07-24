@@ -223,7 +223,7 @@
         tools:layout_editor_absoluteY="85dp" />
 
     <TextView
-        android:id="@+id/Search_motor1"
+        android:id="@+id/Search_heatTemp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="10dp"
@@ -240,7 +240,7 @@
         tools:layout_editor_absoluteY="85dp" />
 
     <TextView
-        android:id="@+id/Search_motor2"
+        android:id="@+id/Search_heatPow"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="10dp"

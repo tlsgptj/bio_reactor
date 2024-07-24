@@ -15,7 +15,6 @@ class MyDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NA
     }
 
     override fun onCreate(db: SQLiteDatabase) {
-        // 각 ID에 대해 테이블 생성
         for (tempId in 1..12) {
             createTable(db, tempId)
         }

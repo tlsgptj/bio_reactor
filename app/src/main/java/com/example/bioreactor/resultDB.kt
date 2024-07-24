@@ -27,9 +27,9 @@ class resultDB(private val context: Context) {
                     val temp10 = childSnapshot.child("temp/temp10").getValue(Float::class.java) ?: 0.0f
                     val temp11 = childSnapshot.child("temp/temp11").getValue(Float::class.java) ?: 0.0f
                     val temp12 = childSnapshot.child("temp/temp12").getValue(Float::class.java) ?: 0.0f
+                    val heattemp = childSnapshot.child("temp/heatTemp").getValue(Float::class.java) ?: 0.0f
+                    val heatPow = childSnapshot.child("temp/heatPow").getValue(Float::class.java) ?: 0.0f
                     val ph = childSnapshot.child("PH").getValue(Float::class.java) ?: 0.0f
-                    val motorSpeed = childSnapshot.child("motor").getValue(Float::class.java) ?: 0
-                    val motorSpeed1 = childSnapshot.child("motor1").getValue(Float::class.java) ?: 0
 
                     val sensorData = SensorData(
                         temp1,
@@ -44,9 +44,9 @@ class resultDB(private val context: Context) {
                         temp10,
                         temp11,
                         temp12,
-                        ph,
-                        motorSpeed,
-                        motorSpeed1
+                        heattemp,
+                        heatPow,
+                        ph
                     )
                     dataList.add(sensorData)
                 }

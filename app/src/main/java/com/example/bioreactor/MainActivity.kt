@@ -21,6 +21,8 @@ import com.google.firebase.FirebaseApp
 import com.google.firebase.database.*
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
+import kotlinx.coroutines.*
+import kotlinx.coroutines.withContext as withContext1
 
 class MainActivity : AppCompatActivity(), Runnable {
     private lateinit var UV_button: Button
@@ -158,20 +160,20 @@ class MainActivity : AppCompatActivity(), Runnable {
 
     override fun run() {
         // 반복 실행할 코드
-        handler.postDelayed(runnable, 1000) // 1초마다 실행
+        handler.postDelayed(runnable, 10000)
+    // 1초마다 실행
     }
 
     private fun fetchDataFromFirebase() {
         val tempIds = 1..12 // 1부터 12까지의 tempId 목록
 
-        // 데이터가 모두 처리된 후 차트를 업데이트하기 위한 변수
-        var dataCount = 0
-        val totalTempIds = tempIds.count()
+        CoroutineScope(Dispatchers.IO).launch {
+            var dataCount = 0
+            val totalTempIds = tempIds.count()
 
-        for (tempId in tempIds) {
-            val tempRef = database.getReference("temp$tempId")
-            tempRef.addListenerForSingleValueEvent(object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
+            for (tempId in tempIds) {
+                val tempRef = database.getReference("temp$tempId")
+                tempRef.get().addOnSuccessListener { snapshot ->
                     val dataList = mutableListOf<Data>()
 
                     for (child in snapshot.children) {
@@ -189,37 +191,42 @@ class MainActivity : AppCompatActivity(), Runnable {
 
                     dataCount++
 
-                    // 모든 tempId에 대한 데이터가 처리되었는지 확인
                     if (dataCount == totalTempIds) {
-                        loadDataAndDisplayCharts()
+                        // Update the UI on the main thread
+                        launch(Dispatchers.Main) {
+                            loadDataAndDisplayCharts()
+                        }
                     }
+                }.addOnFailureListener { error ->
+                    Log.w("MainActivity", "데이터를 읽어오는데 실패했습니다.", error)
                 }
-
-                override fun onCancelled(error: DatabaseError) {
-                    Log.w("MainActivity", "데이터를 읽어오는데 실패했습니다.", error.toException())
-                }
-            })
+            }
         }
     }
+
+
+
 
 
 
     private fun loadDataAndDisplayCharts() {
-        dataSets.clear()
+        CoroutineScope(Dispatchers.IO).launch {
+            dataSets.clear()
 
-        // 모든 tempId의 데이터를 가져옵니다.
-        val allData = dbHelper.getDataByAllTempIds()
+            val allData = dbHelper.getDataByAllTempIds()
 
-        // 각 tempId에 대한 데이터 리스트를 처리합니다.
-        for (tempId in 1..12) {
-            val data = allData[tempId] ?: emptyList()
-            val entries = data.map { Entry(it.time.toFloat(), it.value.toFloat()) }
-            dataSets.add(entries)
+            for (tempId in 1..12) {
+                val data = allData[tempId] ?: emptyList()
+                val entries = data.map { Entry(it.time.toFloat(), it.value.toFloat()) }
+                dataSets.add(entries)
+            }
+
+            withContext1(Dispatchers.Main) {
+                chartViewAdapter.updateData(dataSets)
+            }
         }
-
-        // 차트 데이터를 업데이트합니다.
-        chartViewAdapter.updateData(dataSets)
     }
+
 
 
     private fun saveTextToDatabase(reference: DatabaseReference, text: String, context: Context) {
